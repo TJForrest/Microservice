@@ -1,0 +1,220 @@
+import typer 
+import textwrap
+import os 
+from rich import print 
+from rich.pretty import Pretty 
+from rich.panel import Panel 
+from rich.console import Console
+from rich.markdown import Markdown
+from rich.text import Text
+from rich.live import Live 
+from rich.layout import Layout 
+
+
+# Create a typer app to use app.command to act as functions
+app = typer.Typer()
+
+
+#JUST FOR TESTING 
+test = "TEST"
+
+
+# Checks the os then calls the approrite terminal clear sig
+def clear_screen():
+	os.system("cls" if os.name == "nt" else "clear") 
+
+
+#--------------------------|Markdown Formating|---------------------------------
+
+# Home page title formating --> May change to Ascii art
+MARKDOWN_home_title = """
+# *PROJECT CAR* 
+"""
+md_hm_title = Markdown(MARKDOWN_home_title)
+
+# Help page title formating --> May change to Ascii art
+MARKDOWN_help_title = """
+# *HELP PAGE* 
+"""
+md_hlp_title = Markdown(MARKDOWN_help_title)
+
+# Garage page title formating --> May change to Ascii art
+MARKDOWN_garage_title = """
+# *GARAGE* 
+"""
+md_gar_title = Markdown(MARKDOWN_garage_title)
+
+# Maintenance page title formating --> May change to Ascii art
+MARKDOWN_maintenance_title = """
+# *MAINTENANCE* 
+"""
+md_mat_title = Markdown(MARKDOWN_maintenance_title)
+
+# Gas page title formating --> May change to Ascii art
+MARKDOWN_gas_title = """
+# *GAS* 
+"""
+md_gas_title = Markdown(MARKDOWN_gas_title)
+
+# Notes page title formating --> May change to Ascii art
+MARKDOWN_notes_title = """
+# *NOTES* 
+"""
+md_nts_title = Markdown(MARKDOWN_notes_title)
+#-------------------------------------------------------------------------------
+
+
+# Exit commands
+exit_line = Text()
+exit_line.append("Type", style="bold")
+exit_line.append("'exit'", style="bold red")
+exit_line.append("Or", style="bold")
+exit_line.append("'quit'", style="bold red")
+exit_line.append("to leave program", style="bold")
+
+
+
+
+
+#----------------------------|Text fields|--------------------------------------
+# Home page info text box
+home_info = Text("""Welcome to your vitural garage.
+Here you will be able to track maintenance, 
+log your gas mileage, create notes about your project cars,
+and store all the details about all your cars.
+
+
+At any point in this program you can type "help" and you will be directed to 
+the help page where all your questions will be answered
+""", justify="center")
+
+
+
+
+# Maintence reminders text box --> will need to be updateable
+# Full text fild that i can send vars to then get stingified in panel. 
+mr_jobs = f"Add Some Maintenance Tasks"
+
+
+
+# Help page info text box
+help_info = Text("""Info about the prog, 
+FILL IN
+""", justify="left")
+
+help_command_list = Text("""
+Help -- Takes you to this page.
+Home -- Takes you to the Home page.
+Garage -- Takes you to your Garage. 
+Maintenance -- Takes you to the Maintenance page. 
+Gas -- Takes you to the Gas Mileage tracker page. 
+Notes -- Take you to the Notes page. 
+""", justify="left")
+
+
+#-------------------------------------------------------------------------------
+
+# Nav Bar - just list of page commands
+# broken down for modularity to use on each page with centered instances 
+# pass into each corosponding command call
+# print(Panel(****, title="Navigation"))
+cnt_hom = Text("Help | Garage | Maintence |Gas | Notes", justify="center") 
+cnt_gar = Text("Home | Help | Maintence | Gas | Notes",justify="center") 
+cnt_hlp = Text("Home | Garage | Maintence | Gas | Notes", justify="center")  
+cnt_mat = Text("Home | Help | Garage | Gas | Notes", justify="center") 
+cnt_gas = Text("Home | Help | Garage | Maintence | Notes" , justify="center") 
+cnt_nts = Text("Home | Help | Garage | Maintence | Gas", justify="center") 
+
+
+# Layout management 
+help_layout = Layout()
+
+# Help layout --------
+
+## Set the layout into three horizontal colums
+help_layout.split_column(
+	Layout(name="top"),
+	Layout(name="mid"),
+	Layout(name="bot"),
+)
+## top column 
+help_layout["top"].split(
+	Layout(Panel(exit_line))
+)
+help_layout["top"].size = 1 
+## mid column 
+help_layout["mid"].split(
+	Layout(Panel(md_hlp_title)) 
+)
+## sets bottom into two side by side panels
+help_layout["bot"].split_row(
+	Layout(name="right"), 
+	Layout(name="left"), 
+)
+### adjustments to bot rows
+#help_layout["left"].ratio = 1
+ 
+help_layout["right"].split(
+	Layout(Panel(help_command_list))
+)
+
+help_layout["left"].split(
+	Layout(Panel(help_info))
+)
+
+# Home page command 
+@app.command()
+def home():
+	clear_screen()
+	print(Panel(exit_line))
+	print(md_hm_title)
+	print(Panel(home_info))
+	print(Panel(mr_jobs, title="Maintenance Reminders"))
+	print(Panel(cnt_hom, title="Navigation"))
+
+
+# Help page command 
+@app.command()
+def help():
+	clear_screen()
+#	print(Panel(exit_line))
+#	print(md_hlp_title)
+	print(Panel(help_layout))
+#	print(Panel(cnt_hom, title="Navigation"))
+	
+# command lib
+commands = {
+	"home": home,
+	"help": help,
+}
+
+
+
+# interactive PHASE -- TESTING 
+@app.command()
+def procar():
+	clear_screen()
+	print(Panel(exit_line))
+	print(md_hm_title)
+	print(Panel(home_info))
+	print(Panel(mr_jobs, title="Maintenance Reminders"))
+	print(Panel(cnt_hom, title="Navigation"))
+	
+	while True:
+		
+		user_input = input("Enter your commands here --> ").strip().lower() 
+	
+				# exit condition	
+		if user_input in ['quit', 'exit']:
+			print("Leaving garage") 
+			break
+		
+		elif user_input in commands: 
+			commands[user_input]()
+
+		else:
+			print("[bold red]Unknown command. Type 'help' for available commands.[/bold red]")
+
+# Executes the app() as a whole
+if __name__ == "__main__":
+	app() 
