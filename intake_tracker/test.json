@@ -1,0 +1,6 @@
+{
+	"labels": ["Monday", "Tuesday", "Wednesday"], 
+    "protein": [50, 60,45], 
+    "water": [100,110,99], 
+    "pre": [5, 7, 4] 
+}
