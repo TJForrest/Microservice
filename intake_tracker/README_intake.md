@@ -6,11 +6,11 @@ Socket connection needs to be established utilizing zmq structure
 import zmq
 ```
 - Establish socket using 
-  ```python
+```python
 socket = context.socket(zmq.REQ)`
 ```
 - Connect socket to localhost and free port 
-  ```python
+```python
 socket.connect("tcp://localhost:5557")
 ```
 
